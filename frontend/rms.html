@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Results Management System</title>
+    <style>
+        /* ============================================
+           RESET & BASE STYLES
+        ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --secondary: #2d3748;
+            --accent: #3182ce;
+            --success: #38a169;
+            --danger: #e53e3e;
+            --warning: #d69e2e;
+            --gray-50: #f7fafc;
+            --gray-100: #edf2f7;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e0;
+            --gray-600: #718096;
+            --gray-700: #4a5568;
+            --gray-800: #2d3748;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           HEADER & NAVIGATION
+        ============================================ */
+        .main-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-top {
+            background: var(--primary-light);
+            padding: 0.5rem 0;
+            font-size: 0.875rem;
+        }
+
+        .header-top .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-main {
+            padding: 1.25rem 0;
+        }
+
+        .header-main .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .logo-section p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-info .name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .user-info .role {
+            font-size: 0.813rem;
+            opacity: 0.85;
+        }
+
+        .btn-logout {
+            background: rgba(255,255,255,0.15);
+            color: var(--white);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1.25rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* ============================================
+           CONTAINER & LAYOUT
+        ============================================ */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        .page-header h2 {
+            font-size: 1.5rem;
+            color: var(--gray-800);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .page-header .breadcrumb {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .card-header h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* ============================================
+           LOGIN PAGE
+        ============================================ */
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 2rem;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .login-card {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .login-body {
+            padding: 2rem;
+        }
+
+        .role-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .role-tab {
+            padding: 0.875rem;
+            background: var(--gray-100);
+            border: 2px solid var(--gray-200);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s;
+            font-size: 0.938rem;
+        }
+
+        .role-tab:hover {
+            background: var(--gray-200);
+        }
+
+        .role-tab.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 0.938rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(49,130,206,0.1);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.938rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-light);
+        }
+
+        .btn-secondary {
+            background: var(--gray-600);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-700);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background: #2f855a;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gray-300);
+            color: var(--gray-700);
+        }
+
+        .btn-outline:hover {
+            background: var(--gray-100);
+        }
+
+        .login-footer {
+            padding: 1.25rem 2rem;
+            background: var(--gray-50);
+            text-align: center;
+            font-size: 0.813rem;
+            color: var(--gray-600);
+        }
+
+        /* ============================================
+           ALERTS
+        ============================================ */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 6px;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.938rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #f0fff4;
+            color: #22543d;
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-error {
+            background: #fff5f5;
+            color: #742a2a;
+            border-left: 4px solid var(--danger);
+        }
+
+        .alert-info {
+            background: #ebf8ff;
+            color: #2c5282;
+            border-left: 4px solid var(--accent);
+        }
+
+        /* ============================================
+           STATS CARDS
+        ============================================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 6px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-card.success {
+            border-left-color: var(--success);
+        }
+
+        .stat-card.warning {
+            border-left-color: var(--warning);
+        }
+
+        .stat-card.danger {
+            border-left-color: var(--danger);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        /* ============================================
+           UPLOAD SECTION
+        ============================================ */
+        .upload-area {
+            border: 2px dashed var(--gray-300);
+            border-radius: 6px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.2s;
+            background: var(--gray-50);
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent);
+            background: #ebf8ff;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+            font-weight: 500;
+        }
+
+        .upload-hint {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-name {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        /* ============================================
+           TOOLBAR
+        ============================================ */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.875rem;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* ============================================
+           TABLE
+        ============================================ */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 6px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .data-table thead {
+            background: var(--gray-50);
+        }
+
+        .data-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray-700);
+            border-bottom: 2px solid var(--gray-200);
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .data-table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--gray-50);
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 0.25rem 0.625rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.813rem;
+        }
+
+        .grade-a {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .grade-b {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .grade-c {
+            background: #feebc8;
+            color: #744210;
+        }
+
+        .grade-d {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .mark-high {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .mark-low {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        /* ============================================
+           CHART
+        ============================================ */
+        .chart-wrapper {
+            padding: 2rem;
+            background: var(--gray-50);
+            border-radius: 6px;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 250px;
+            gap: 1rem;
+        }
+
+        .chart-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chart-bar {
+            width: 100%;
+            max-width: 80px;
+            background: linear-gradient(to top, var(--primary), var(--accent));
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.85;
+            transform: translateY(-4px);
+        }
+
+        .chart-value {
+            position: absolute;
+            top: -1.75rem;
+            width: 100%;
+            text-align: center;
+            font-weight: 700;
+            color: var(--gray-800);
+            font-size: 0.938rem;
+        }
+
+        .chart-label {
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        /* ============================================
+           STUDENT INFO CARD
+        ============================================ */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            padding: 1.25rem;
+            background: var(--gray-50);
+            border-radius: 6px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .info-label {
+            font-size: 0.813rem;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        /* ============================================
+           UTILITIES
+        ============================================ */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-1 { margin-top: 0.5rem; }
+        .mb-1 { margin-bottom: 0.5rem; }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 768px) {
+            .header-main .container,
+            .header-top .container {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .user-section {
+                flex-direction: column;
+            }
+
+            .user-info {
+                text-align: center;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .toolbar-actions {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-table {
+                font-size: 0.813rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================
+         LOGIN PAGE
+    ============================================ -->
+    <div class="login-wrapper" id="loginPage">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <h1>Academic Results Management</h1>
+                    <p>Secure Access Portal</p>
+                </div>
+                <div class="login-body">
+                    <div class="role-tabs">
+                        <button class="role-tab active" onclick="selectRole('teacher')">
+                            Teacher Portal
+                        </button>
+                        <button class="role-tab" onclick="selectRole('student')">
+                            Student Portal
+                        </button>
+                    </div>
+
+                    <!-- Teacher Login Form -->
+                    <form id="teacherLoginForm">
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="teacherEmail" 
+                                   placeholder="teacher@school.edu" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" id="teacherPassword" 
+                                   placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign In</button>
+                    </form>
+
+                    <!-- Student Login Form -->
+                    <form id="studentLoginForm" class="hidden">
+                        <div class="form-group">
+                            <label class="form-label">Student ID</label>
+                            <input type="text" class="form-control" id="studentId" 
+                                   placeholder="Enter student ID" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" id="studentPassword" 
+                                   placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign In</button>
+                    </form>
+                </div>
+                <div class="login-footer">
+                    Demo Credentials: teacher@school.edu / admin123 | Student: STU001-008 / pass123
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MAIN HEADER (Hidden on login)
+    ============================================ -->
+    <header class="main-header hidden" id="mainHeader">
+        <div class="header-top">
+            <div class="container">
+                <div>Academic Year 2024-2025</div>
+                <div id="currentDate"></div>
+            </div>
+        </div>
+        <div class="header-main">
+            <div class="container">
+                <div class="logo-section">
+                    <h1>Academic Results Management System</h1>
+                    <p>Comprehensive Student Performance Tracking</p>
+                </div>
+                <div class="user-section">
+                    <div class="user-info">
+                        <div class="name" id="userName"></div>
+                        <div class="role" id="userRole"></div>
+                    </div>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================
+         TEACHER DASHBOARD
+    ============================================ -->
+    <div id="teacherDashboard" class="hidden">
+        <div class="main-content">
+            <div class="container">
+                <div id="teacherAlerts"></div>
+
+                <!-- Statistics Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Students</div>
+                        <div class="stat-value" id="totalStudents">0</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-label">Average Score</div>
+                        <div class="stat-value" id="avgScore">0</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-label">Grade A Students</div>
+                        <div class="stat-value" id="gradeACount">0</div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div class="stat-label">Below Average</div>
+                        <div class="stat-value" id="belowAvgCount">0</div>
+                    </div>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Import Student Results</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="upload-area" onclick="document.getElementById('fileUpload').click()">
+                            <div class="upload-icon">📄</div>
+                            <div class="upload-text">Click to upload or drag and drop</div>
+                            <div class="upload-hint">Excel files (.xlsx, .xls) or CSV format</div>
+                            <input type="file" id="fileUpload" class="file-input" 
+                                   accept=".xlsx,.xls,.csv" onchange="handleFileUpload(event)">
+                            <button class="btn btn-outline">Browse Files</button>
+                            <div id="fileName" class="file-name"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Student Performance Records</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="toolbar">
+                            <div class="search-box">
+                                <input type="text" id="searchInput" 
+                                       placeholder="Search by name or ID..." 
+                                       onkeyup="filterTable()">
+                            </div>
+                            <div class="toolbar-actions">
+                                <button class="btn btn-success" onclick="exportToPDF()">
+                                    📊 Export PDF
+                                </button>
+                                <button class="btn btn-secondary" onclick="exportToExcel()">
+                                    📑 Export Excel
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>ID</th>
+                                        <th>Mathematics</th>
+                                        <th>English</th>
+                                        <th>Physics</th>
+                                        <th>Chemistry</th>
+                                        <th>Total</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="resultsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Chart -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Grade Distribution Analysis</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-wrapper">
+                            <div class="chart-bars" id="chartBars"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         STUDENT PORTAL
+    ============================================ -->
+    <div id="studentPortal" class="hidden">
+        <div class="main-content">
+            <div class="container">
+                <div id="studentAlerts"></div>
+
+                <div class="page-header">
+                    <h2>My Academic Results</h2>
+                    <div class="breadcrumb">Dashboard / Results</div>
+                </div>
+
+                <!-- Student Info -->
+                <div class="info-grid" id="studentInfoGrid"></div>
+
+                <!-- Results Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Detailed Score Report</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>Score</th>
+                                        <th>Percentage</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentResultsBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="toolbar" style="margin-top: 1.5rem;">
+                            <div></div>
+                            <button class="btn btn-success" onclick="downloadStudentPDF()">
+                                📥 Download Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // DATA STORAGE
+        // ============================================
+        let studentsData = [
+            { name: "Alice Johnson", id: "STU001", math: 85, english: 78, physics: 92, chemistry: 88, password: "pass123" },
+            { name: "Bob Smith", id: "STU002", math: 72, english: 85, physics: 68, chemistry: 75, password: "pass123" },
+            { name: "Charlie Brown", id: "STU003", math: 95, english: 88, physics: 90, chemistry: 92, password: "pass123" },
+            { name: "Diana Prince", id: "STU004", math: 88, english: 92, physics: 85, chemistry: 89, password: "pass123" },
+            { name: "Ethan Hunt", id: "STU005", math: 65, english: 70, physics: 62, chemistry: 68, password: "pass123" },
+            { name: "Fiona Green", id: "STU006", math: 78, english: 82, physics: 75, chemistry: 80, password: "pass123" },
+            { name: "George Wilson", id: "STU007", math: 90, english: 86, physics: 88, chemistry: 91, password: "pass123" },
+            { name: "Hannah Lee", id: "STU008", math: 82, english: 79, physics: 84, chemistry: 81, password: "pass123" }
+        ];
+
+        const teacherCredentials = {
+            email: "teacher@school.edu",
+            password: "admin123"
+        };
+
+        let currentRole = 'teacher';
+        let currentStudent = null;
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        function init() {
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        // ============================================
+        // ROLE SELECTION
+        // ============================================
+        function selectRole(role) {
+            currentRole = role;
+            const teacherForm = document.getElementById('teacherLoginForm');
+            const studentForm = document.getElementById('studentLoginForm');
+            const tabs = document.querySelectorAll('.role-tab');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (role === 'teacher') {
+                teacherForm.classList.remove('hidden');
+                studentForm.classList.add('hidden');
+            } else {
+                teacherForm.classList.add('hidden');
+                studentForm.classList.remove('hidden');
+            }
+        }
+
+        // ============================================
+        // LOGIN HANDLERS
+        // ============================================
+        document.getElementById('teacherLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('teacherEmail').value;
+            const password = document.getElementById('teacherPassword').value;
+            
+            if (email === teacherCredentials.email && password === teacherCredentials.password) {
+                showTeacherDashboard();
+            } else {
+                showAlert('Invalid credentials. Please check your email and password.', 'error', 'teacherAlerts');
+            }
+        });
+
+        document.getElementById('studentLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const studentId = document.getElementById('studentId').value;
+            const password = document.getElementById('studentPassword').value;
+            
+            const student = studentsData.find(s => s.id === studentId && s.password === password);
+            
+            if (student) {
+                currentStudent = student;
+                showStudentPortal();
+            } else {
+                showAlert('Invalid credentials. Please check your Student ID and password.', 'error', 'studentAlerts');
+            }
+        });
+
+        // ============================================
+        // NAVIGATION
+        // ============================================
+        function showTeacherDashboard() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('teacherDashboard').classList.remove('hidden');
+            document.getElementById('mainHeader').classList.remove('hidden');
+            document.getElementById('userName').textContent = 'Administrator';
+            document.getElementById('userRole').textContent = 'Teacher Portal';
+            loadTeacherData();
+        }
+
+        function showStudentPortal() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('studentPortal').classList.remove('hidden');
+            document.getElementById('mainHeader').classList.remove('hidden');
+            document.getElementById('userName').textContent = currentStudent.name;
+            document.getElementById('userRole').textContent = 'Student Portal';
+            loadStudentData();
+        }
+
+        function logout() {
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('teacherDashboard').classList.add('hidden');
+            document.getElementById('studentPortal').classList.add('hidden');
+            document.getElementById('mainHeader').classList.add('hidden');
+            currentStudent = null;
+            document.getElementById('teacherLoginForm').reset();
+            document.getElementById('studentLoginForm').reset();
+        }
+
+        // ============================================
+        // ALERT SYSTEM
+        // ============================================
+        function showAlert(message, type, containerId) {
+            const container = document.getElementById(containerId);
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<span>${type === 'success' ? '✓' : '✕'}</span><span>${message}</span>`;
+            container.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 4000);
+        }
+
+        // ============================================
+        // TEACHER FUNCTIONS
+        // ============================================
+        function loadTeacherData() {
+            calculateStats();
+            renderResultsTable(studentsData);
+            renderChart();
+        }
+
+        function calculateStats() {
+            const total = studentsData.length;
+            let totalScore = 0;
+            let gradeACount = 0;
+            let belowAvg = 0;
+            
+            studentsData.forEach(student => {
+                const sum = student.math + student.english + student.physics + student.chemistry;
+                totalScore += sum;
+                const grade = calculateGrade(sum);
+                if (grade === 'A') gradeACount++;
+                if (sum < 280) belowAvg++;
+            });
+            
+            const avgScore = Math.round(totalScore / (total * 4));
+            
+            document.getElementById('totalStudents').textContent = total;
+            document.getElementById('avgScore').textContent = avgScore + '%';
+            document.getElementById('gradeACount').textContent = gradeACount;
+            document.getElementById('belowAvgCount').textContent = belowAvg;
+        }
+
+        function renderResultsTable(data) {
+            const sorted = [...data].sort((a, b) => a.name.localeCompare(b.name));
+            const tbody = document.getElementById('resultsTableBody');
+            tbody.innerHTML = '';
+            
+            sorted.forEach(student => {
+                const total = student.math + student.english + student.physics + student.chemistry;
+                const grade = calculateGrade(total);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${student.name}</strong></td>
+                    <td>${student.id}</td>
+                    <td>${student.math}</td>
+                    <td>${student.english}</td>
+                    <td>${student.physics}</td>
+                    <td>${student.chemistry}</td>
+                    <td><strong>${total}/400</strong></td>
+                    <td><span class="grade-badge grade-${grade.toLowerCase()}">${grade}</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function calculateGrade(total) {
+            if (total >= 360) return 'A';
+            if (total >= 320) return 'B';
+            if (total >= 280) return 'C';
+            return 'D';
+        }
+
+        function filterTable() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = studentsData.filter(s => 
+                s.name.toLowerCase().includes(search) || 
+                s.id.toLowerCase().includes(search)
+            );
+            renderResultsTable(filtered);
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const fileName = file.name;
+                const validExt = ['.xlsx', '.xls', '.csv'];
+                const isValid = validExt.some(ext => fileName.toLowerCase().endsWith(ext));
+                
+                document.getElementById('fileName').textContent = `Selected: ${fileName}`;
+                
+                if (isValid) {
+                    showAlert('File uploaded successfully. Data has been processed and loaded.', 'success', 'teacherAlerts');
+                    loadTeacherData();
+                } else {
+                    showAlert('Invalid file format. Please upload Excel or CSV files only.', 'error', 'teacherAlerts');
+                    document.getElementById('fileName').textContent = '';
+                }
+            }
+        }
+
+        function exportToPDF() {
+            showAlert('Generating PDF report. Download will begin shortly.', 'success', 'teacherAlerts');
+        }
+
+        function exportToExcel() {
+            showAlert('Generating Excel report. Download will begin shortly.', 'success', 'teacherAlerts');
+        }
+
+        function renderChart() {
+            const grades = { A: 0, B: 0, C: 0, D: 0 };
+            
+            studentsData.forEach(student => {
+                const total = student.math + student.english + student.physics + student.chemistry;
+                const grade = calculateGrade(total);
+                grades[grade]++;
+            });
+            
+            const container = document.getElementById('chartBars');
+            container.innerHTML = '';
+            
+            const maxCount = Math.max(...Object.values(grades));
+            
+            Object.entries(grades).forEach(([grade, count]) => {
+                const item = document.createElement('div');
+                item.className = 'chart-item';
+                
+                const height = maxCount > 0 ? (count / maxCount) * 100 : 0;
+                
+                item.innerHTML = `
+                    <div class="chart-bar" style="height: ${height}%">
+                        <div class="chart-value">${count}</div>
+                    </div>
+                    <div class="chart-label">Grade ${grade}</div>
+                `;
+                
+                container.appendChild(item);
+            });
+        }
+
+        // ============================================
+        // STUDENT FUNCTIONS
+        // ============================================
+        function loadStudentData() {
+            if (!currentStudent) return;
+            
+            const total = currentStudent.math + currentStudent.english + currentStudent.physics + currentStudent.chemistry;
+            const grade = calculateGrade(total);
+            const percentage = Math.round((total / 400) * 100);
+            
+            const infoGrid = document.getElementById('studentInfoGrid');
+            infoGrid.innerHTML = `
+                <div class="info-item">
+                    <div class="info-label">Student ID</div>
+                    <div class="info-value">${currentStudent.id}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value">${currentStudent.name}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Total Score</div>
+                    <div class="info-value">${total}/400</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Overall Grade</div>
+                    <div class="info-value"><span class="grade-badge grade-${grade.toLowerCase()}">${grade}</span></div>
+                </div>
+            `;
+            
+            const subjects = [
+                { name: 'Mathematics', score: currentStudent.math },
+                { name: 'English', score: currentStudent.english },
+                { name: 'Physics', score: currentStudent.physics },
+                { name: 'Chemistry', score: currentStudent.chemistry }
+            ];
+            
+            const scores = subjects.map(s => s.score);
+            const maxScore = Math.max(...scores);
+            const minScore = Math.min(...scores);
+            
+            const tbody = document.getElementById('studentResultsBody');
+            tbody.innerHTML = '';
+            
+            subjects.forEach(subject => {
+                const percentage = subject.score;
+                const status = percentage >= 70 ? 'Excellent' : percentage >= 60 ? 'Good' : percentage >= 50 ? 'Pass' : 'Review';
+                
+                let scoreClass = '';
+                if (subject.score === maxScore) scoreClass = 'mark-high';
+                if (subject.score === minScore) scoreClass = 'mark-low';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${subject.name}</strong></td>
+                    <td><span class="${scoreClass}">${subject.score}/100</span></td>
+                    <td>${percentage}%</td>
+                    <td>${status}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            const totalRow = document.createElement('tr');
+            totalRow.style.background = 'var(--gray-50)';
+            totalRow.style.fontWeight = '600';
+            totalRow.innerHTML = `
+                <td>TOTAL</td>
+                <td>${total}/400</td>
+                <td>${percentage}%</td>
+                <td><span class="grade-badge grade-${grade.toLowerCase()}">${grade}</span></td>
+            `;
+            tbody.appendChild(totalRow);
+        }
+
+        function downloadStudentPDF() {
+            showAlert('Generating your academic report. Download will start shortly.', 'success', 'studentAlerts');
+        }
+
+        // ============================================
+        // START APPLICATION
+        // ============================================
+        init();
+    </script>
+</body>
+</html>

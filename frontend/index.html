@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.socket.io; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://api.cloudinary.com wss:; media-src 'self' https:;"> -->
+  <title>iNodes - Social Media & Messaging</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
+</head>
+<body>
+  <!-- Connection Indicator -->
+  <div id="connection-indicator" class="online">Online</div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Main Container -->
+  <div id="app" class="app-container">
+    
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="auth-screen">
+      <div class="auth-container">
+        <div class="auth-logo">
+          <h1>iNodes</h1>
+          <p>Connect, Share, Message</p>
+        </div>
+
+        <!-- Login Form -->
+        <div id="login-form" class="auth-form">
+          <h2>Login</h2>
+          <form id="login-form-element">
+            <div class="form-group">
+              <input 
+                type="text" 
+                id="login-username" 
+                placeholder="Username or Email" 
+                required 
+                autocomplete="username"
+              >
+            </div>
+            <div class="form-group">
+              <input 
+                type="password" 
+                id="login-password" 
+                placeholder="Password" 
+                required 
+                autocomplete="current-password"
+              >
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+          </form>
+          <p class="auth-switch">
+            Don't have an account? 
+            <a href="#" id="show-register-link">Sign up</a>
+          </p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form" class="auth-form" style="display: none;">
+          <h2>Sign Up</h2>
+          <form id="register-form-element">
+            <div class="form-group">
+              <input 
+                type="text" 
+                id="register-username" 
+                placeholder="Username" 
+                required 
+                pattern="[a-zA-Z0-9._-]{3,30}"
+                title="3-30 characters, letters, numbers, dots, underscores, hyphens"
+              >
+            </div>
+            <div class="form-group">
+              <input 
+                type="email" 
+                id="register-email" 
+                placeholder="Email" 
+                required 
+                autocomplete="email"
+              >
+            </div>
+            <div class="form-group">
+              <input 
+                type="text" 
+                id="register-displayname" 
+                placeholder="Display Name" 
+              >
+            </div>
+            <div class="form-group">
+              <input 
+                type="password" 
+                id="register-password" 
+                placeholder="Password (min 8 chars, 1 letter, 1 number)" 
+                required 
+                pattern=".{8,}"
+                autocomplete="new-password"
+              >
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+          </form>
+          <p class="auth-switch">
+            Already have an account? 
+            <a href="#" id="show-login-link">Login</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main App (Hidden until logged in) -->
+    <div id="main-app" class="main-app" style="display: none;">
+      
+      <!-- Navigation Sidebar -->
+      <nav class="sidebar">
+        <div class="sidebar-header">
+          <h2>iNodes</h2>
+        </div>
+        
+        <div class="nav-links">
+          <a href="#" class="nav-link active" data-view="feed">
+            <span class="icon">🏠</span>
+            <span>Home</span>
+          </a>
+          <a href="#" class="nav-link" data-view="explore">
+            <span class="icon">🔍</span>
+            <span>Explore</span>
+          </a>
+          <a href="#" class="nav-link" data-view="messages">
+            <span class="icon">💬</span>
+            <span>Messages</span>
+            <span class="badge" id="messages-badge" style="display: none;">0</span>
+          </a>
+          <a href="#" class="nav-link" data-view="notifications">
+            <span class="icon">🔔</span>
+            <span>Notifications</span>
+            <span class="badge" id="notifications-badge" style="display: none;">0</span>
+          </a>
+          <a href="#" class="nav-link" data-view="profile">
+            <span class="icon">👤</span>
+            <span>Profile</span>
+          </a>
+        </div>
+
+        <div class="sidebar-footer">
+          <button class="btn btn-primary btn-block" id="create-post-btn">
+            ➕ Create Post
+          </button>
+          <button class="btn btn-secondary btn-block" id="logout-btn">
+            Logout
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Content Area -->
+      <main class="main-content">
+        
+        <!-- Feed View -->
+        <div id="feed-view" class="view active">
+          <div class="view-header">
+            <h2>Home Feed</h2>
+            <div class="feed-tabs">
+              <button class="tab-btn active" data-feed-type="home">Following</button>
+              <button class="tab-btn" data-feed-type="explore">Explore</button>
+            </div>
+          </div>
+          <div id="posts-container" class="posts-container">
+            <div class="loading">Loading posts...</div>
+          </div>
+        </div>
+
+        <!-- Explore View -->
+        <div id="explore-view" class="view">
+          <div class="view-header">
+            <h2>Explore</h2>
+            <div class="search-bar">
+              <input 
+                type="text" 
+                id="explore-search" 
+                placeholder="Search users, posts, hashtags..." 
+              >
+            </div>
+          </div>
+          <div id="explore-container" class="explore-container">
+            <div class="loading">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Messages View -->
+        <div id="messages-view" class="view">
+          <div class="messages-layout">
+            <div class="chats-sidebar">
+              <div class="view-header">
+                <h2>Messages</h2>
+                <button class="btn btn-sm" id="new-chat-btn">➕</button>
+              </div>
+              <div id="chats-list" class="chats-list">
+                <div class="loading">Loading chats...</div>
+              </div>
+            </div>
+            <div class="chat-area">
+              <div id="no-chat-selected" class="empty-state">
+                <span class="icon">💬</span>
+                <p>Select a chat to start messaging</p>
+              </div>
+              <div id="active-chat" class="active-chat" style="display: none;">
+                <div class="chat-header">
+                  <div class="chat-info">
+                    <img id="chat-avatar" src="" alt="" class="avatar">
+                    <div>
+                      <h3 id="chat-name">Loading...</h3>
+                      <p id="chat-status" class="text-muted">Offline</p>
+                    </div>
+                  </div>
+                  <button class="btn btn-sm" id="chat-info-btn">ℹ️</button>
+                </div>
+                <div id="messages-container" class="messages-container">
+                  <!-- Messages will be inserted here -->
+                </div>
+                <div class="chat-input-area">
+                  <div id="typing-indicator" class="typing-indicator" style="display: none;">
+                    Someone is typing...
+                  </div>
+                  <form id="message-form" class="chat-input-form">
+                    <button type="button" class="btn btn-icon" id="attach-media-btn">📎</button>
+                    <input 
+                      type="text" 
+                      id="message-input" 
+                      placeholder="Type a message..." 
+                      autocomplete="off"
+                    >
+                    <input 
+                      type="file" 
+                      id="media-input" 
+                      style="display: none;" 
+                      accept="image/*,video/*"
+                    >
+                    <button type="submit" class="btn btn-primary">Send</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notifications View -->
+        <div id="notifications-view" class="view">
+          <div class="view-header">
+            <h2>Notifications</h2>
+          </div>
+          <div id="notifications-container" class="notifications-container">
+            <div class="loading">Loading notifications...</div>
+          </div>
+        </div>
+
+        <!-- Profile View -->
+        <div id="profile-view" class="view">
+          <div class="profile-header">
+            <div class="profile-cover"></div>
+            <div class="profile-info">
+              <img id="profile-avatar" src="" alt="Avatar" class="profile-avatar">
+              <div class="profile-details">
+                <h2 id="profile-displayname">Loading...</h2>
+                <p id="profile-username" class="text-muted">@username</p>
+                <p id="profile-bio">Bio goes here</p>
+                <div class="profile-stats">
+                  <div class="stat">
+                    <strong id="profile-posts">0</strong>
+                    <span>Posts</span>
+                  </div>
+                  <div class="stat">
+                    <strong id="profile-followers">0</strong>
+                    <span>Followers</span>
+                  </div>
+                  <div class="stat">
+                    <strong id="profile-following">0</strong>
+                    <span>Following</span>
+                  </div>
+                </div>
+                <button class="btn btn-primary" id="edit-profile-btn">Edit Profile</button>
+              </div>
+            </div>
+          </div>
+          <div class="profile-tabs">
+            <button class="tab-btn active" data-profile-tab="posts">Posts</button>
+            <button class="tab-btn" data-profile-tab="stories">Stories</button>
+          </div>
+          <div id="profile-content" class="profile-content">
+            <div class="loading">Loading...</div>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- Stories Bar (Top) -->
+      <aside class="stories-bar">
+        <div class="view-header">
+          <h3>Stories</h3>
+          <button class="btn btn-sm" id="create-story-btn">➕</button>
+        </div>
+        <div id="stories-container" class="stories-container">
+          <!-- Stories will be inserted here -->
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="http://localhost:4000/socket.io/socket.io.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/socket.js"></script>
+  <script src="/js/ui-handlers.js"></script>
+</body>
+</html>

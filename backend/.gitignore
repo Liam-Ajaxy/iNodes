@@ -1,0 +1,75 @@
+# Environment Variables
+.env
+.env.local
+.env.production
+.env.development
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs
+lib-cov/
+
+# Coverage directory
+coverage/
+.nyc_output/
+
+# Build outputs
+dist/
+build/
+
+# Temporary files
+uploads/
+temp/
+tmp/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Test files
+test-results/
+*.test.js.snap
+
+# Production configs (if different from .env)
+config/production.json
+
+# SSL certificates (if stored locally)
+*.pem
+*.key
+*.cert
+
+# Database dumps
+*.sql
+*.dump
+*.bak
+
+# Media uploads (optional - depends on your setup)
+# Uncomment if you want to ignore local uploads folder
+# backend/uploads/*
+# !backend/uploads/.gitkeep
