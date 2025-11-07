@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Story = require('./models/Story'); // adjust path if different
 
-const uri = 'mongodb+srv://inodes_db_user:ResxDwlSLBJrwCxS@inodes.joltipa.mongodb.net/?appName=iNodes';
+const uri = 'mongodb://localhost:27017/yourDatabaseName';
 
 (async () => {
   try {
